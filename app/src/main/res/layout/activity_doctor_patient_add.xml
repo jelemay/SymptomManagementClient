@@ -1,0 +1,282 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="com.coursera.symptommanagement.activities.doctor.DoctorPatientAddActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/header_activity_doctor_patient_add"
+        android:id="@+id/textView2"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin" />
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/textView2"
+        android:id="@+id/newPatientFields">
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/scrollViewWholePage"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/label_first_name"
+                        android:id="@+id/medicationListName"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:textSize="6pt"
+                        android:layout_gravity="bottom|right"
+                        android:layout_weight="2" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/patientFirstName"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_gravity="center_horizontal|left"
+                        android:layout_marginLeft="@dimen/input_label_space"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/label_last_name"
+                        android:id="@+id/textView3"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_gravity="bottom|right"
+                        android:textSize="6pt"
+                        android:layout_weight="2" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/patientLastName"
+                        android:layout_marginLeft="@dimen/input_label_space"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_horizontal|left" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/label_username"
+                        android:id="@+id/textView4"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_gravity="bottom|right"
+                        android:textSize="6pt"
+                        android:layout_weight="2" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/patientUsername"
+                        android:layout_marginLeft="@dimen/input_label_space"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_gravity="center_horizontal|left"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/label_password"
+                        android:id="@+id/textView5"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_gravity="bottom|right"
+                        android:layout_weight="2"
+                        android:textSize="6pt" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/patientPassword"
+                        android:layout_marginLeft="@dimen/input_label_space"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_gravity="center_horizontal|left"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/label_medical_record_id"
+                        android:id="@+id/textView6"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:textSize="6pt"
+                        android:layout_weight="2"
+                        android:layout_gravity="bottom|right" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/patientMedicalRecordId"
+                        android:layout_marginLeft="@dimen/input_label_space"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:inputType="number"
+                        android:layout_gravity="center_horizontal|left"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/label_patient_profile_medications"
+                    android:id="@+id/textView"
+                    android:layout_marginTop="@dimen/activity_vertical_margin_2x"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin_2x"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin_2x"
+                    android:layout_below="@+id/medicationListName"
+                    android:layout_marginTop="@dimen/input_label_space"
+                    android:id="@+id/addMedications"
+                    android:focusableInTouchMode="true">
+
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/spinnerAddMedications"
+                        android:layout_marginTop="@dimen/activity_vertical_margin" />
+
+                    <Button
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/button_add_medication"
+                        android:id="@+id/buttonAddMedication"
+                        android:layout_gravity="bottom|right"
+                        android:onClick="addMedicationToTable" />
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/medicationSpinner"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin_2x"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin_2x"
+                    android:layout_marginRight="@dimen/activity_vertical_margin_2x">
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:id="@+id/scrollViewMedications"
+                        android:scrollbars="horizontal|vertical"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin">
+
+                        <TableLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:isScrollContainer="true"
+                            android:id="@+id/addMedicationsTable"></TableLayout>
+                    </ScrollView>
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin">
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/button_add_new_patient"
+                        android:id="@+id/button"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </RelativeLayout>
+
+</RelativeLayout>
