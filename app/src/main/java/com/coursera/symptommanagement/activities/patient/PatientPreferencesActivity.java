@@ -26,6 +26,19 @@ public class PatientPreferencesActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_preferences);
+
+        // set each button tag to "reminder"
+        Button btn1 = (Button) findViewById(R.id.btnReminderOne);
+        btn1.setTag("Reminder");
+
+        Button btn2 = (Button) findViewById(R.id.btnReminderTwo);
+        btn2.setTag("Reminder");
+
+        Button btn3 = (Button) findViewById(R.id.btnReminderThree);
+        btn3.setTag("Reminder");
+
+        Button btn4 = (Button) findViewById(R.id.btnReminderFour);
+        btn4.setTag("Reminder");
     }
 
     public void showTimePickerDialog(View v) {
@@ -49,6 +62,10 @@ public class PatientPreferencesActivity extends Activity
 
         String hourString = (time.get(Calendar.HOUR) == 0) ? "12" : time.get(Calendar.HOUR) + "";
         String minuteString = (time.get(Calendar.MINUTE) == 0) ? "00" : String.valueOf(minute);
+
+        if (minuteString.length() < 2) {
+            minuteString = "0" + minuteString;
+        }
 
         String timeString = hourString + ":" + minuteString + " " + am_pm;
 
@@ -75,9 +92,11 @@ public class PatientPreferencesActivity extends Activity
                 break;
         }
 
-
-
         return timeString;
+    }
+
+    public String getTimeString(String buttonTag, int hourOfDay, int minute) {
+        return null;
     }
 
 

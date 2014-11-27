@@ -36,13 +36,91 @@
         <RadioGroup
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin_2x">
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_2x"
+            android:id="@+id/radGroupMed">
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/radio_yes"
                 android:id="@+id/radMedYes" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin_halfx"
+                android:id="@+id/medDateTimeLayout">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin_halfx">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="@string/label_date"
+                        android:id="@+id/textView2"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin_3x" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:id="@+id/txtDate"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin_halfx"
+                        android:layout_weight="1" />
+
+                    <Button
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/button_edit"
+                        android:id="@+id/btnDate"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin_2x"
+                        android:onClick="showTimePickerDialog"
+                        android:layout_marginRight="@dimen/activity_vertical_margin_halfx" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin_halfx">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="@string/label_time"
+                        android:id="@+id/textView7"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin_3x" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:id="@+id/txtTime"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin_halfx"
+                        android:layout_weight="1" />
+
+                    <Button
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/button_edit"
+                        android:id="@+id/btnTime"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin_2x"
+                        android:onClick="showTimePickerDialog"
+                        android:layout_marginRight="@dimen/activity_vertical_margin_halfx" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <RadioButton
                 android:layout_width="wrap_content"

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SymptomManagement.iml" filepath="$PROJECT_DIR$/SymptomManagement.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SymptomManagementClient.iml" filepath="$PROJECT_DIR$/SymptomManagementClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

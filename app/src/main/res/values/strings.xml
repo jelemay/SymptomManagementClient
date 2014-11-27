@@ -22,8 +22,11 @@
     <string name="label_reminder_three">Reminder Three:</string>
     <string name="label_reminder_four">Reminder Four:</string>
     <string name="label_pain">Pain:</string>
+    <string name="label_appetite">Appetite:</string>
     <string name="label_medications_taken">Medications Taken:</string>
     <string name="label_did_you_take">Did you take</string>
+    <string name="label_date">Date:</string>
+    <string name="label_time">Time:</string>
     <string name="radio_yes">Yes</string>
     <string name="radio_no">No</string>
     <string name="doctor">Doctor</string>

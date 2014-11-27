@@ -1,52 +1,55 @@
 package com.coursera.symptommanagement.fragments;
 
 import android.app.Activity;
-import android.app.Dialog;
+import android.app.DatePickerDialog;
 import android.app.DialogFragment;
-import android.app.TimePickerDialog;
+import android.app.Dialog;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TimePicker;
+import android.view.ViewGroup;
+import android.widget.DatePicker;
 
 import java.util.Calendar;
+
+import com.coursera.symptommanagement.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link com.coursera.symptommanagement.fragments.TimePickerFragment.TimePickerFragmentListener} interface
+ * {@link com.coursera.symptommanagement.fragments.DatePickerFragment.DatePickerFragmentListener} interface
  * to handle interaction events.
- * Use the {@link TimePickerFragment#newInstance} factory method to
+ * Use the {@link DatePickerFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class TimePickerFragment extends DialogFragment
-                                    implements TimePickerDialog.OnTimeSetListener {
+public class DatePickerFragment extends DialogFragment
+                        implements DatePickerDialog.OnDateSetListener {
 
-    public static final String FRAGMENT_NAME = "Time Picker Fragment: ";
+    public static final String FRAGMENT_NAME = "Date Picker Fragment: ";
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String BUTTON_ID = "BUTTON_ID";
     private static final String BUTTON_TAG = "BUTTON_TAG";
 
     private int buttonId;
     private String btnTag;
 
-    private TimePickerFragmentListener mListener;
+    private DatePickerFragmentListener mListener;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param v Parameter 1.
-     * @return A new instance of fragment TimePickerFragment.
+     * @return A new instance of fragment DatePickerFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TimePickerFragment newInstance(View v) {
-        TimePickerFragment fragment = new TimePickerFragment();
-        Log.d(FRAGMENT_NAME, "Entered TimePickerFragment newInstance()");
+    public static DatePickerFragment newInstance(View v) {
+        DatePickerFragment fragment = new DatePickerFragment();
+        Log.d(FRAGMENT_NAME, "Entered DatePickerFragment newInstance()");
         Log.d(FRAGMENT_NAME, "This is button id: " + v.getId());
         int buttonId = v.getId();
         Log.d(FRAGMENT_NAME, "this is btnTag value: " + v.getTag().toString());
@@ -58,36 +61,34 @@ public class TimePickerFragment extends DialogFragment
         fragment.setArguments(args);
         return fragment;
     }
-
-    public TimePickerFragment() {
+    public DatePickerFragment() {
         // Required empty public constructor
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        Log.d(FRAGMENT_NAME, "Creating new dialog.");
-
-        // Use the current time as the default values for the picker
+        // Use the current date as the default date in the picker
         final Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
 
-        // Create a new instance of TimePickerDialog and return it
-        return new TimePickerDialog(getActivity(), this, hour, minute,
-                DateFormat.is24HourFormat(getActivity()));
+        // Create a new instance of DatePickerDialog and return it
+        return new DatePickerDialog(getActivity(), this, year, month, day);
+
     }
 
-    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-        Log.d(FRAGMENT_NAME, "Entered onTimeSet().");
+    public void onDateSet(DatePicker view, int year, int month, int day) {
+        Log.d(FRAGMENT_NAME, "Entered onDateSet().");
         if (mListener != null) {
             if (btnTag.equalsIgnoreCase("Reminder")) {
-                mListener.getTimeString(buttonId, hourOfDay, minute);
-                Log.d(FRAGMENT_NAME, "Called getTimeString() with buttonId");
+                mListener.getDateString(buttonId, year, month, day);
+                Log.d(FRAGMENT_NAME, "Called getDateString() with buttonId");
             }
             else {
-                mListener.getTimeString(btnTag, hourOfDay, minute);
-                Log.d(FRAGMENT_NAME, "Called getTimeString() with buttonTag");
+                mListener.getDateString(btnTag, year, month, day);
+                Log.d(FRAGMENT_NAME, "Called getDateString() with buttonTag");
             }
         }
     }
@@ -105,7 +106,7 @@ public class TimePickerFragment extends DialogFragment
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (TimePickerFragmentListener) activity;
+            mListener = (DatePickerFragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -128,9 +129,9 @@ public class TimePickerFragment extends DialogFragment
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface TimePickerFragmentListener {
-        public String getTimeString(int buttonId, int hourOfDay, int minute);
-        public String getTimeString(String btnTag, int hourOfDay, int minute);
+    public interface DatePickerFragmentListener {
+        public String getDateString(int buttonId, int year, int month, int day);
+        public String getDateString(String btnTag, int year, int month, int day);
     }
 
 }
