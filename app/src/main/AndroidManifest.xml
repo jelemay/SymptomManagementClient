@@ -50,10 +50,7 @@
             android:name=".activities.patient.PatientCheckInActivity"
             android:label="@string/title_activity_patient_check_in" >
         </activity>
-        <activity
-            android:name=".activities.ReminderAlertActivity"
-            android:label="@string/title_activity_reminder_alert" >
-        </activity>
+
 
         <receiver
             android:name=".receivers.ReminderAlarmReceiver"
