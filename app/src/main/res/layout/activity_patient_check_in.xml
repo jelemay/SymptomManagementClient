@@ -100,6 +100,17 @@
                     android:layout_marginTop="@dimen/activity_vertical_margin_halfx"
                     android:id="@+id/tableMedQuestions"></TableLayout>
             </LinearLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/button_save_check_in"
+                android:id="@+id/button"
+                android:layout_below="@+id/scrollView"
+                android:layout_marginTop="@dimen/activity_vertical_margin_2x"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin_3x"
+                android:layout_marginRight="@dimen/activity_horizontal_margin_3x" />
         </LinearLayout>
     </ScrollView>
+
 </RelativeLayout>

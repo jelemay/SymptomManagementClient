@@ -1,7 +1,10 @@
 package com.coursera.symptommanagement.activities.patient;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DialogFragment;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 
 import com.coursera.symptommanagement.R;
 import com.coursera.symptommanagement.fragments.TimePickerFragment;
+import com.coursera.symptommanagement.receivers.ReminderAlarmReceiver;
 
 import java.util.Calendar;
 
@@ -52,14 +56,25 @@ public class PatientPreferencesActivity extends Activity
         Calendar time = Calendar.getInstance();
         time.set(Calendar.HOUR_OF_DAY, hourOfDay);
         time.set(Calendar.MINUTE, minute);
+        time.set(Calendar.SECOND, 0);
 
         if (time.get(Calendar.AM_PM) == Calendar.AM) {
             am_pm = "AM";
+            time.set(Calendar.AM_PM, Calendar.AM);
         }
         else {
             am_pm = "PM";
+            time.set(Calendar.AM_PM, Calendar.PM);
         }
 
+        // set up alarm manager
+        Intent checkInIntent = new Intent(this, ReminderAlarmReceiver.class);
+        PendingIntent operation = PendingIntent.getBroadcast(this, 0, checkInIntent, 0);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, time.getTimeInMillis(), operation);
+
+        // prepare time string to pass to text field
         String hourString = (time.get(Calendar.HOUR) == 0) ? "12" : time.get(Calendar.HOUR) + "";
         String minuteString = (time.get(Calendar.MINUTE) == 0) ? "00" : String.valueOf(minute);
 

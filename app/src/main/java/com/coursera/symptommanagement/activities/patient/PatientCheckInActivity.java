@@ -197,20 +197,6 @@ public class PatientCheckInActivity extends Activity
         return dateString;
     }
 
-//    private String getMonthForInt(int num) {
-//        int mon = num + 1;
-//        Map<Integer,String> monthMap = new HashMap<Integer, String>();
-//        monthMap.put(1, "Jan");
-//        monthMap.put(2, "Feb");
-//        monthMap.put(3, "Mar");
-//        monthMap.put(4, "Apr");
-//        monthMap.put(5, "May");
-//        monthMap.put(6, "Jun");
-//        monthMap.put(7, "");
-//        monthMap.put(1, "Jan");
-//        return month;
-//    }
-
     public String getTimeString(int buttonId, int hourOfDay, int minute) {
         return null;
     }

@@ -40,6 +40,7 @@
     <string name="button_check_in">Check In</string>
     <string name="button_update_preferences">Update Preferences</string>
     <string name="button_save_reminders">Save Reminders</string>
+    <string name="button_save_check_in">Save Check In</string>
     <string name="button_patient_list">View Patient List</string>
     <string name="button_add_new_patient">Add New Patient</string>
     <string name="button_update_medications">Update Medications</string>
@@ -57,5 +58,6 @@
     <string name="title_activity_patient_profile">PatientProfileActivity</string>
     <string name="title_activity_patient_preferences">PatientPreferencesActivity</string>
     <string name="title_activity_patient_check_in">PatientCheckInActivity</string>
+    <string name="title_activity_reminder_alert">ReminderAlertActivity</string>
 
 </resources>
