@@ -52,8 +52,8 @@ public interface DoctorServiceAPI {
     @GET(SVC_PATH + "/{doctorId}/medications")
     public List<Medication> getMedicationList(@Path("doctorId") Long id);
 
-    @POST(SVC_PATH +"/doctor/{doctorId}")
-    public Doctor addPatientToDoctor(@Body PatientRequest request, @Path("doctorId") Long id) ;
+    @POST(SVC_PATH +"/{doctorId}")
+    public Patient addPatientToDoctor(@Path("doctorId") Long id, @Body PatientRequest request) ;
 
     @GET(SVC_PATH +"/username/{username}")
     public Doctor getDoctorByUsername(@Path("username") String username);

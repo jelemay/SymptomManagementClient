@@ -1,6 +1,7 @@
 package com.coursera.symptommanagement.models;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class PatientRequest implements Serializable {
 
@@ -9,6 +10,8 @@ public class PatientRequest implements Serializable {
     private String username;
     private String password;
     private Long medicalRecordId;
+
+    private List<Medication> medications;
 
 
     public PatientRequest() {}
@@ -49,4 +52,10 @@ public class PatientRequest implements Serializable {
         this.medicalRecordId = medicalRecordId;
     }
 
+    public List<Medication> getMedications() {
+        return medications;
+    }
+    public void setMedications(List<Medication> medications) {
+        this.medications = medications;
+    }
 }

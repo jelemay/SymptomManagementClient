@@ -1,9 +1,7 @@
 package com.coursera.symptommanagement.activities.doctor;
 
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,10 +19,20 @@ import android.widget.Toast;
 
 import com.coursera.symptommanagement.R;
 import com.coursera.symptommanagement.adapters.MedicationListAdapter;
+import com.coursera.symptommanagement.models.Doctor;
 import com.coursera.symptommanagement.models.Medication;
+import com.coursera.symptommanagement.models.Patient;
+import com.coursera.symptommanagement.models.PatientRequest;
+import com.coursera.symptommanagement.services.DoctorServiceAPI;
+import com.coursera.symptommanagement.task.CallableTask;
+import com.coursera.symptommanagement.task.SvcStore;
+import com.coursera.symptommanagement.task.TaskCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class DoctorPatientAddActivity extends Activity {
 
@@ -32,19 +40,24 @@ public class DoctorPatientAddActivity extends Activity {
     private final String MEDICATION_TAG = "tableMedication";
     private final String MED_EXISTS_MESSAGE = "This medication has already been added.";
 
+    private Doctor doctor;
     private Spinner medicationSpinner;
+    private List<Medication> medicationList = new ArrayList<Medication>();
+    private Map<String,Medication> medicationMap = new HashMap<String, Medication>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doctor_patient_add);
 
+        Intent intent = getIntent();
+        doctor = (Doctor) intent.getSerializableExtra("DOCTOR");
+
         // spinner with all available medications
         medicationSpinner = (Spinner) findViewById(R.id.spinnerAddMedications);
-        ArrayList<Medication> medications = (ArrayList<Medication>) getMedicationList();
 
-        medicationSpinner.setAdapter(new MedicationListAdapter(this, R.layout.item_medication,
-                medications));
+        // get all medications from server
+        getAllMedications();
 
         // handle outer/inner scroll views (whole page and medication table)
         final ScrollView outer = (ScrollView) findViewById(R.id.scrollViewWholePage);
@@ -128,14 +141,113 @@ public class DoctorPatientAddActivity extends Activity {
 
     }
 
-    public List<Medication> getMedicationList() {
-        List<Medication> medications = new ArrayList<Medication>();
-        medications.add(new Medication(1L, "OxyContin"));
-        medications.add(new Medication(2L, "Hydrocodone"));
-        medications.add(new Medication(3L, "Percocet"));
-        medications.add(new Medication(4L, "Vicodin"));
-        medications.add(new Medication(5L, "Methadone"));
-        return medications;
+    public void getAllMedications() {
+        final DoctorServiceAPI doctorService = SvcStore.getDoctorService();
+
+        CallableTask.invoke(new Callable<List<Medication>>() {
+            @Override
+            public List<Medication> call() throws Exception {
+                return doctorService.getMedicationList(doctor.getId());
+            }
+        }, new TaskCallback<List<Medication>>() {
+            @Override
+            public void success(List<Medication> medications) {
+                medicationList.addAll(medications);
+                medicationMap = createMedicationMap(medications);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        medicationSpinner.setAdapter(new MedicationListAdapter(getBaseContext(),
+                                R.layout.item_medication,
+                                (ArrayList<Medication>) medicationList));
+                    }
+                });
+            }
+
+            @Override
+            public void error(Exception e) {
+                Log.e(ACTIVITY_NAME, "Error pulling medication list from server.", e);
+                Toast.makeText(
+                        DoctorPatientAddActivity.this,
+                        "Could not get medication list.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }, this);
+    }
+
+    public Map<String,Medication> createMedicationMap(List<Medication> medications) {
+        Map<String,Medication> medMap = new HashMap<String,Medication>();
+        for (Medication med : medications) {
+            medMap.put(med.getName(), med);
+        }
+        return medMap;
+    }
+
+    public void saveNewPatient(View v) {
+        TextView tvPatientFirstName = (TextView) findViewById(R.id.patientFirstName);
+        TextView tvPatientLastName = (TextView) findViewById(R.id.patientLastName);
+        TextView tvPatientUsername = (TextView) findViewById(R.id.patientUsername);
+        TextView tvPatientPassword = (TextView) findViewById(R.id.patientPassword);
+        TextView tvPatientMedRecId = (TextView) findViewById(R.id.patientMedicalRecordId);
+
+        String patFirstName = tvPatientFirstName.getText().toString();
+        String patLastName = tvPatientLastName.getText().toString();
+        String patUsername = tvPatientUsername.getText().toString();
+        String patPassword = tvPatientPassword.getText().toString();
+        Long patMedRecId = Long.parseLong(tvPatientMedRecId.getText().toString());
+
+        Log.d(ACTIVITY_NAME, "New Patient: " + patFirstName + " " + patLastName + " " +
+                                patUsername + " " + patPassword + " " + patMedRecId);
+
+        List<Medication> medList = new ArrayList<Medication>();
+
+        final TableLayout medTable = (TableLayout) findViewById(R.id.addMedicationsTable);
+        for (int i = 0; i < medTable.getChildCount(); i++) {
+            TableRow row = (TableRow) medTable.getChildAt(i);
+            TextView foundMed = (TextView) row.findViewWithTag(MEDICATION_TAG);
+            String foundMedName = foundMed.getText().toString();
+            medList.add(medicationMap.get(foundMedName));
+            Log.d(ACTIVITY_NAME, "Found medication " + foundMedName);
+        }
+
+        final DoctorServiceAPI doctorService = SvcStore.getDoctorService();
+        final PatientRequest request = new PatientRequest();
+        request.setFirstName(patFirstName);
+        request.setLastName(patLastName);
+        request.setUsername(patUsername);
+        request.setPassword(patPassword);
+        request.setMedicalRecordId(patMedRecId);
+        request.setMedications(medList);
+
+        CallableTask.invoke(new Callable<Patient>() {
+            @Override
+            public Patient call() throws Exception {
+                return doctorService.addPatientToDoctor(doctor.getId(), request);
+            }
+        }, new TaskCallback<Patient>() {
+            @Override
+            public void success(Patient medications) {
+                Toast.makeText(
+                        DoctorPatientAddActivity.this,
+                        "Saved patient.",
+                        Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(getApplicationContext(), DoctorPatientListActivity.class);
+                intent.putExtra("DOCTOR", doctor);
+                startActivity(intent);
+            }
+
+            @Override
+            public void error(Exception e) {
+                Log.e(ACTIVITY_NAME, "Error saving new patient.", e);
+                Toast.makeText(
+                        DoctorPatientAddActivity.this,
+                        "Could not save patient.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }, this);
+
     }
 
 

@@ -53,26 +53,6 @@ public class DoctorPatientListActivity extends Activity {
 
         getPatientList(doctor);
 
-//        // create the adapter to convert the array to views
-//        PatientListAdapter adapter = new PatientListAdapter(this, (ArrayList<Patient>)patientList);
-//
-//        // attach the adapter to a ListView
-//        ListView listView = (ListView) findViewById(R.id.patientListView);
-//        listView.setAdapter(adapter);
-//
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                TextView tv = (TextView) view.findViewById(R.id.patientList_id);
-//                String patientId = tv.getText().toString();
-//                Patient patient = patientMap.get(Long.parseLong(patientId));
-//
-//                Intent intent = new Intent(getApplicationContext(), DoctorPatientProfileActivity.class);
-//                intent.putExtra("PATIENT", patient);
-//                startActivity(intent);
-//            }
-//        });
-
     }
 
     public void getPatientList(final Doctor doctor) {

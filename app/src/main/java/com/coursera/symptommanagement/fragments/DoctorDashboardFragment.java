@@ -27,7 +27,6 @@ public class DoctorDashboardFragment extends Fragment implements View.OnClickLis
 
     private OnFragmentInteractionListener mListener;
 
-    private Button btnPatientSearch;
     private Button btnPatientList;
     private Button btnPatientAdd;
     private Doctor doctor;
@@ -72,11 +71,9 @@ public class DoctorDashboardFragment extends Fragment implements View.OnClickLis
 
 
 
-        btnPatientSearch = (Button) doctorInfoView.findViewById(R.id.buttonPatientSearch);
         btnPatientList = (Button) doctorInfoView.findViewById(R.id.buttonPatientList);
         btnPatientAdd = (Button) doctorInfoView.findViewById(R.id.buttonPatientAdd);
 
-        btnPatientSearch.setOnClickListener(this);
         btnPatientList.setOnClickListener(this);
         btnPatientAdd.setOnClickListener(this);
 
@@ -111,10 +108,6 @@ public class DoctorDashboardFragment extends Fragment implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.buttonPatientSearch:
-                Log.d(FRAGMENT_NAME, "Patient search button pressed.");
-                mListener.onPatientSearchClicked(v);
-                break;
             case R.id.buttonPatientList:
                 Log.d(FRAGMENT_NAME, "Patient list button pressed.");
                 mListener.onPatientListClicked(v);
@@ -141,7 +134,6 @@ public class DoctorDashboardFragment extends Fragment implements View.OnClickLis
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        public void onPatientSearchClicked(View v);
         public void onPatientListClicked(View v);
         public void onPatientAddClicked(View v);
     }

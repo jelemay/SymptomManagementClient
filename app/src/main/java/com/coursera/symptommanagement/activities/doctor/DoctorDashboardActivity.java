@@ -67,10 +67,6 @@ public class DoctorDashboardActivity extends Activity implements OnFragmentInter
         return super.onOptionsItemSelected(item);
     }
 
-    public void onPatientSearchClicked(View v) {
-
-    }
-
     public void onPatientListClicked(View v) {
         Intent patientListIntent = new Intent(this, DoctorPatientListActivity.class);
         patientListIntent.putExtra("DOCTOR", doctor);

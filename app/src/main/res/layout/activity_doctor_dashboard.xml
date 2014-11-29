@@ -18,13 +18,15 @@
             android:text="@string/name_doctor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/txtDoctorName" />
+            android:id="@+id/txtDoctorName"
+            android:textSize="20dp" />
     </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:layout_marginTop="@dimen/activity_vertical_margin_2x">
 
         <FrameLayout
             android:id="@+id/doctor_info"

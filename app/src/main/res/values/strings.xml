@@ -3,7 +3,7 @@
 
     <string name="app_name">SymptomManagement</string>
     <string name="header_login">Please Login...</string>
-    <string name="header_activity_doctor_dashboard">DoctorDashboardActivity</string>
+    <string name="header_activity_doctor_dashboard">Doctor Dashboard</string>
     <string name="header_activity_doctor_patient_add">Add Patient</string>
     <string name="header_activity_doctor_update_meds">Update Patient Medications</string>
     <string name="header_activity_patient_update_preferences">Update Preferences</string>
@@ -49,15 +49,15 @@
     <string name="button_add_medication">Add Medication</string>
     <string name="button_delete_medication">Delete</string>
     <string name="button_save_patient_medications">Save Patient Medications</string>
-    <string name="title_activity_doctor_patient_list">DoctorPatientListActivity</string>
+    <string name="title_activity_doctor_patient_list">Patient List</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_doctor_patient_add">DoctorPatientAddActivity</string>
+    <string name="title_activity_doctor_patient_add">Add Patient</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_doctor_patient_profile">DoctorPatientProfileActivity</string>
-    <string name="title_activity_doctor_update_medications">DoctorUpdateMedicationsActivity</string>
-    <string name="title_activity_patient_profile">PatientProfileActivity</string>
-    <string name="title_activity_patient_preferences">PatientPreferencesActivity</string>
-    <string name="title_activity_patient_check_in">PatientCheckInActivity</string>
-    <string name="title_activity_reminder_alert">ReminderAlertActivity</string>
+    <string name="title_activity_doctor_patient_profile">Patient Profile</string>
+    <string name="title_activity_doctor_update_medications">Update Medications</string>
+    <string name="title_activity_patient_profile">Patient Profile</string>
+    <string name="title_activity_patient_preferences">Patient Preferences</string>
+    <string name="title_activity_patient_check_in">Patient Check In</string>
+    <string name="title_activity_reminder_alert">Reminder Alert</string>
 
 </resources>

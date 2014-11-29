@@ -1,11 +1,12 @@
 package com.coursera.symptommanagement.models;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by victorialemay on 11/29/14.
  */
-public class PatientMedicationRequest {
+public class PatientMedicationRequest implements Serializable {
 
     private List<Medication> medications;
 
