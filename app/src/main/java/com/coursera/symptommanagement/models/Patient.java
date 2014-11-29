@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class Patient implements Serializable {
 
-    private String id;
+    private Long id;
     private String firstName;
     private String lastName;
     private String medicalRecordId;
@@ -16,10 +16,11 @@ public class Patient implements Serializable {
     private List<Medication> medications;
     private Doctor doctor;
 
+    private static final String TAB = "\t";
 
     public Patient() {}
 
-    public Patient(String id, String firstName, String lastName, String medicalRecordId,
+    public Patient(Long id, String firstName, String lastName, String medicalRecordId,
                    List<Medication> medications) {
         this.id = id;
         this.firstName = firstName;
@@ -29,10 +30,10 @@ public class Patient implements Serializable {
     }
 
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -67,5 +68,14 @@ public class Patient implements Serializable {
     }
     public void setDoctor(Doctor doctor) {
         this.doctor = doctor;
+    }
+
+    @Override
+    public String toString() {
+        String patient = this.id + TAB +
+                         this.firstName + TAB +
+                         this.lastName + TAB +
+                         this.medicalRecordId + TAB;
+        return patient;
     }
 }

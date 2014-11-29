@@ -26,7 +26,6 @@ import com.coursera.symptommanagement.services.UserServiceAPI;
 import com.coursera.symptommanagement.task.CallableTask;
 import com.coursera.symptommanagement.task.SvcStore;
 import com.coursera.symptommanagement.task.TaskCallback;
-import com.coursera.symptommanagement.task.UserCreateTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +39,6 @@ public class LoginActivity extends Activity {
 
     public static final String ACTIVITY_NAME = "Login Activity: ";
 
-
     /**
      * Called when the activity is first created.
      */
@@ -51,54 +49,7 @@ public class LoginActivity extends Activity {
         EditText doctorLoginPassword = (EditText) findViewById(R.id.doctorLoginPassword);
         EditText doctorLoginUsername = (EditText) findViewById(R.id.doctorLoginUsername);
 
-
     }
-
-    /**
-     * Called when the activity is about to become visible.
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //   Log.d(ACTIVITY_NAME, "The onStart() event");
-    }
-
-    /**
-     * Called when the activity has become visible.
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //  Log.d(ACTIVITY_NAME, "The onResume() event");
-    }
-
-    /**
-     * Called when another activity is taking focus.
-     */
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //   Log.d(ACTIVITY_NAME, "The onPause() event");
-    }
-
-    /**
-     * Called when the activity is no longer visible.
-     */
-    @Override
-    protected void onStop() {
-        super.onStop();
-        //  Log.d(ACTIVITY_NAME, "The onStop() event");
-    }
-
-    /**
-     * Called just before the activity is destroyed.
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Log.d(ACTIVITY_NAME, "The onDestroy() event");
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -120,15 +71,12 @@ public class LoginActivity extends Activity {
     }
 
     public void startUserLogin(View view) {
-        // TODO: hardcode username and password, clientID, everything for credentials
-        final String USERNAME = "alemay";
-        final String PASSWORD = "password";
-        final String CLIENT_ID = "mobile";
-        // This is the emulator's version of localhost
-        //final String SERVER = "https://10.0.2.2:8443";
-        final String SERVER = "https://192.168.1.132:8443";
 
-        // softcode the username and password
+        // This is the emulator's version of localhost
+        final String SERVER = "https://10.0.2.2:8443";
+//        final String SERVER = "https://192.168.1.132:8443";
+
+        // get the username and password
         EditText doctorLoginPassword = (EditText) findViewById(R.id.doctorLoginPassword);
         EditText doctorLoginUsername = (EditText) findViewById(R.id.doctorLoginUsername);
 
@@ -140,56 +88,55 @@ public class LoginActivity extends Activity {
         SvcStore.setUserService(userSvc);
 
         CallableTask.invoke(new Callable<UserMedical>() {
-
             @Override
             public UserMedical call() throws Exception {
                 return userSvc.findByUsername(username);
             }
         }, new TaskCallback<UserMedical>() {
-
             @Override
             public void success(UserMedical result) {
-                // OAuth 2.0 grant was successful and we
-                // can talk to the server
+
                 UserMedical resultIn = result;
 
                 if (resultIn.getRole().contentEquals("DOCTOR")) {
-                    System.out.println(" going down the Doctor path");
+                    Log.d(ACTIVITY_NAME, " going down the Doctor path");
 
                     DoctorServiceAPI doctorSvc = DoctorService.init(SERVER, username, password);
+                    PatientServiceAPI patientSvc = PatientService.init(SERVER, username, password);
                     SvcStore.setDoctorService(doctorSvc);
+                    SvcStore.setPatientService(patientSvc);
 
                     startDoctorPath(resultIn);
                 } else {
-                    System.out.println(" going down the Patient path");
+                    Log.d(ACTIVITY_NAME, " going down the Patient path");
+
+                    DoctorServiceAPI doctorSvc = DoctorService.init(SERVER, username, password);
                     PatientServiceAPI patientSvc = PatientService.init(SERVER, username, password);
+                    SvcStore.setDoctorService(doctorSvc);
                     SvcStore.setPatientService(patientSvc);
 
                     startPatientPath(resultIn);
                 }
-
             }
 
             @Override
             public void error(Exception e) {
-                Log.e(LoginActivity.class.getName(), "Error logging in via OAuth.", e);
+                Log.e(ACTIVITY_NAME, "Error logging in via OAuth.", e);
 
                 Toast.makeText(
                         LoginActivity.this,
                         "Login failed, check your Internet connection and credentials.",
                         Toast.LENGTH_SHORT).show();
             }
-        });
-
-
+        }, this);
     }
 
 
     public void startDoctorPath(UserMedical user) {
-        System.out.println(" Got the users");
-        System.out.println(user.getUsername());
-        System.out.println(user.getRole());
-        System.out.println(user.getRoleId());
+        Log.d(ACTIVITY_NAME, " Got the users");
+        Log.d(ACTIVITY_NAME, user.getUsername());
+        Log.d(ACTIVITY_NAME, user.getRole());
+        Log.d(ACTIVITY_NAME, String.valueOf(user.getRoleId()));
 
         // use doctor role id to find the doctor from the network database
         //---------------------------------------------------------------
@@ -198,9 +145,7 @@ public class LoginActivity extends Activity {
 
         final DoctorServiceAPI doctorSvc = SvcStore.getDoctorService();
 
-
         CallableTask.invoke(new Callable<Doctor>() {
-
             @Override
             public Doctor call() throws Exception {
                 return doctorSvc.getDoctorByUsername(usr.getUsername());
@@ -209,31 +154,28 @@ public class LoginActivity extends Activity {
 
             @Override
             public void success(Doctor result) {
-                // OAuth 2.0 grant was successful and we
-                // can talk to the server, open up the video listing
+
                 Doctor resultIn = result;
 
                 Intent doctorIntent = new Intent(LoginActivity.this, DoctorDashboardActivity.class);
-                doctorIntent.putExtra("Doctor", resultIn);
+                doctorIntent.putExtra("DOCTOR", resultIn);
 
                 //Remove below  - test of createUser
                 //UserCreateTest.create();
 
                 startActivity(doctorIntent);
-
-
             }
 
             @Override
             public void error(Exception e) {
-                Log.e(LoginActivity.class.getName(), "Error logging in via OAuth.", e);
+                Log.e(ACTIVITY_NAME, "Error logging in via OAuth.", e);
 
                 Toast.makeText(
                         LoginActivity.this,
                         "Login failed, check your Internet connection and credentials.",
                         Toast.LENGTH_SHORT).show();
             }
-        });
+        }, this);
 
     }
 
@@ -243,9 +185,7 @@ public class LoginActivity extends Activity {
 
         final PatientServiceAPI patientSvc = SvcStore.getPatientService();
 
-
         CallableTask.invoke(new Callable<Patient>() {
-
             @Override
             public Patient call() throws Exception {
                 return patientSvc.getPatientByUsername(usr.getUsername());
@@ -254,17 +194,16 @@ public class LoginActivity extends Activity {
 
             @Override
             public void success(Patient result) {
-                // OAuth 2.0 grant was successful and we
-                // can talk to the server, open up the video listing
+
                 Patient resultIn = result;
+                Doctor doctor = result.getDoctor();
+                Log.d(ACTIVITY_NAME, "Retrieved patient: " + resultIn.toString());
+                Log.d(ACTIVITY_NAME, "Retrieved doctor: " + doctor.toString());
 
                 Intent patientIntent = new Intent(LoginActivity.this, PatientProfileActivity.class);
                 patientIntent.putExtra("PATIENT", resultIn);
-                System.out.println(" about to start the patient intent");
-                System.out.println(" about to start the patient intent");
+                Log.d(ACTIVITY_NAME, " about to start the patient intent");
                 startActivity(patientIntent);
-
-
             }
 
             @Override
@@ -276,23 +215,7 @@ public class LoginActivity extends Activity {
                         "Login failed, check your Internet connection and credentials.",
                         Toast.LENGTH_SHORT).show();
             }
-        });
-
-
-
-
-
-
-
-        // get patient from user info
-        // Patient patient = new Patient("1", "David", "Bowie", "145", getMedicationList());
-
-        // Doctor doctor = new Doctor("Freddy", "Mercury");
-        //patient.setDoctor(doctor);
-
-        // Intent patientIntent = new Intent(this, PatientProfileActivity.class);
-        // patientIntent.putExtra("PATIENT", patient);
-        //  startActivity(patientIntent);
+        }, this);
     }
 
     public List<Medication> getMedicationList() {

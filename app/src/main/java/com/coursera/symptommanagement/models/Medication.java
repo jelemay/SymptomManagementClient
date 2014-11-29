@@ -34,6 +34,6 @@ public class Medication implements Serializable {
     }
 
     public String toString() {
-        return this.name;
+        return this. id + " \t" + this.name;
     }
 }

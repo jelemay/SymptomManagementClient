@@ -1,5 +1,6 @@
 package com.coursera.symptommanagement.services;
 
+import com.coursera.symptommanagement.models.Medication;
 import com.coursera.symptommanagement.models.Patient;
 import com.coursera.symptommanagement.models.PatientRequest;
 
@@ -40,6 +41,8 @@ public interface PatientServiceAPI {
     @GET(SVC_PATH +"/{patientId}")
     public Patient getPatientById(@Path("patientId") Long id);
 
+    @GET(SVC_PATH + "/{patientId}/medications")
+    public List<Medication> getPatientMedications(@Path("patientId") Long id);
 
     @GET(SVC_PATH +"/username/{username}")
     public Patient getPatientByUsername(@Path("username") String username);

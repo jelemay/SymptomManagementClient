@@ -2,6 +2,7 @@ package com.coursera.symptommanagement.adapters;
 
 import android.content.Context;
 import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
  * Created by victorialemay on 11/7/14.
  */
 public class PatientListAdapter extends ArrayAdapter<Patient> {
+
+    private static final String ADAPTER_NAME = "Patient List Adapter: ";
 
     private LayoutInflater inflater;
 
@@ -38,6 +41,8 @@ public class PatientListAdapter extends ArrayAdapter<Patient> {
 
         // Get the data item for this position
         Patient patient = getItem(position);
+
+        Log.d(ADAPTER_NAME, "Found patient " + patient.getFirstName() + " " + patient.getLastName());
 
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder;  // view lookup cache stored in tag

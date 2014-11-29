@@ -10,20 +10,31 @@ import android.view.MenuItem;
 import com.coursera.symptommanagement.R;
 import com.coursera.symptommanagement.fragments.DoctorDashboardFragment;
 import com.coursera.symptommanagement.fragments.DoctorDashboardFragment.OnFragmentInteractionListener;
+import com.coursera.symptommanagement.models.Doctor;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 public class DoctorDashboardActivity extends Activity implements OnFragmentInteractionListener {
 
     public static final String ACTIVITY_NAME = "Doctor Dashboard Activity: ";
 
-    private final DoctorDashboardFragment doctorInfoFragment = new DoctorDashboardFragment();
+    private DoctorDashboardFragment doctorInfoFragment;
+    private Doctor doctor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doctor_dashboard);
+
+        Intent intent = getIntent();
+        doctor = (Doctor) intent.getSerializableExtra("DOCTOR");
+        doctorInfoFragment = DoctorDashboardFragment.newInstance(doctor);
+
+        String doctorName = doctor.getLastName() + ", " + doctor.getFirstName();
+        TextView txtDoctorName = (TextView) findViewById(R.id.txtDoctorName);
+        txtDoctorName.setText(doctorName);
 
         FragmentManager fragmentManager = getFragmentManager();
 
@@ -62,11 +73,13 @@ public class DoctorDashboardActivity extends Activity implements OnFragmentInter
 
     public void onPatientListClicked(View v) {
         Intent patientListIntent = new Intent(this, DoctorPatientListActivity.class);
+        patientListIntent.putExtra("DOCTOR", doctor);
         startActivity(patientListIntent);
     }
 
     public void onPatientAddClicked(View v) {
         Intent patientAddIntent = new Intent(this, DoctorPatientAddActivity.class);
+        patientAddIntent.putExtra("DOCTOR", doctor);
         startActivity(patientAddIntent);
     }
 }

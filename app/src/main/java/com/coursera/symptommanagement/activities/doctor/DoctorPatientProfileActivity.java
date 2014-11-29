@@ -1,8 +1,11 @@
 package com.coursera.symptommanagement.activities.doctor;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,19 +14,34 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.coursera.symptommanagement.R;
+import com.coursera.symptommanagement.models.Doctor;
 import com.coursera.symptommanagement.models.Medication;
 import com.coursera.symptommanagement.models.Patient;
+import com.coursera.symptommanagement.services.PatientServiceAPI;
+import com.coursera.symptommanagement.task.CallableTask;
+import com.coursera.symptommanagement.task.SvcStore;
+import com.coursera.symptommanagement.task.TaskCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class DoctorPatientProfileActivity extends Activity {
+
+    private static final String ACTIVITY_NAME = "Doctor Patient Profile Activity: ";
 
     private Button btnUpdateMedications;
     private Button btnViewPain;
     private Button btnViewAppetite;
+    private Doctor doctor;
+    private Patient patient;
+    private List<Medication> medicationList = new ArrayList<Medication>();
+    private Map<Long,Medication> medicationMap = new HashMap<Long,Medication>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +49,14 @@ public class DoctorPatientProfileActivity extends Activity {
         setContentView(R.layout.activity_doctor_patient_profile);
 
         Intent intent = getIntent();
-        final Patient patient = (Patient) intent.getSerializableExtra("PATIENT");
+        patient = (Patient) intent.getSerializableExtra("PATIENT");
+        doctor = patient.getDoctor();
+
+        getMedicationList(patient);
+
+        Log.d(ACTIVITY_NAME, "Entered patient profile: " + patient.getFirstName() + " " +
+                                patient.getLastName() + " with Doctor: " + doctor.getFirstName()
+                                + " " + doctor.getLastName());
 
         // text fields (name and medicalRecordId)
         TextView tvFirstName = (TextView) findViewById(R.id.patientProfileFirstName);
@@ -43,19 +68,24 @@ public class DoctorPatientProfileActivity extends Activity {
         TextView tvMedicalRecordId = (TextView) findViewById(R.id.patientProfileMedicalRecordId);
         tvMedicalRecordId.setText(patient.getMedicalRecordId());
 
-        // medication table
-        ArrayList<Medication> medications = (ArrayList<Medication>) patient.getMedications();
-        TableLayout medTable = (TableLayout) findViewById(R.id.patientProfileMedicationTable);
-        for (Medication medication : medications) {
-            TableRow row = new TableRow(this);
-            row.setLayoutParams(
-                    new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-            TextView tvMedication = new TextView(this);
-            tvMedication.setText(medication.getName());
-            row.addView(tvMedication);
-            medTable.addView(row,
-                    new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
+
+        //ArrayList<Medication> medications = (ArrayList<Medication>) patient.getMedications();
+
+        Log.d(ACTIVITY_NAME, "Finished grabbing medications");
+
+//        // medication table
+//        TableLayout medTable = (TableLayout) findViewById(R.id.patientProfileMedicationTable);
+//        for (Medication medication : medicationList) {
+//            Log.d(ACTIVITY_NAME, "Found medication " + medication.getName());
+//            TableRow row = new TableRow(this);
+//            row.setLayoutParams(
+//                    new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+//            TextView tvMedication = new TextView(this);
+//            tvMedication.setText(medication.getName());
+//            row.addView(tvMedication);
+//            medTable.addView(row,
+//                    new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+//        }
 
         // buttons
         btnUpdateMedications = (Button) findViewById(R.id.buttonPatientProfileUpdateMedication);
@@ -86,16 +116,75 @@ public class DoctorPatientProfileActivity extends Activity {
 
     }
 
-    public List<String> getMedicationList() {
-        List<String> medications = new ArrayList<String>();
-        medications.add("Oxycontin");
-        medications.add("Morphine");
-        medications.add("Advil");
-        //medications.add("Tylenol");
-        //medications.add("Seroquel");
-        //medications.add("Lithium");
-        //medications.add("Levothyroxine");
-        return medications;
+//    public List<String> getMedicationList() {
+//        List<String> medications = new ArrayList<String>();
+//        medications.add("Oxycontin");
+//        medications.add("Morphine");
+//        medications.add("Advil");
+//        //medications.add("Tylenol");
+//        //medications.add("Seroquel");
+//        //medications.add("Lithium");
+//        //medications.add("Levothyroxine");
+//        return medications;
+//    }
+
+    public void getMedicationList(final Patient patient) {
+        final PatientServiceAPI patientService = SvcStore.getPatientService();
+
+        CallableTask.invoke(new Callable<List<Medication>>() {
+            @Override
+            public List<Medication> call() throws Exception {
+                return patientService.getPatientMedications(patient.getId());
+            }
+        }, new TaskCallback<List<Medication>>() {
+
+            @Override
+            public void success(List<Medication> medications) {
+                medicationMap = createMedicationMap(medications);
+                medicationList.addAll(medications);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setUpTableView(getBaseContext());
+                    }
+                });
+            }
+
+            @Override
+            public void error(Exception e) {
+                Log.e(ACTIVITY_NAME, "Error pulling medication list from patient.", e);
+                Toast.makeText(
+                        DoctorPatientProfileActivity.this,
+                        "Could not pull patient profile.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }, this);
+    }
+
+    public Map<Long,Medication> createMedicationMap(List<Medication> medications) {
+        Map<Long,Medication> medMap = new HashMap<Long,Medication>();
+        for (Medication med : medications) {
+            medMap.put(med.getId(), med);
+        }
+        return medMap;
+    }
+
+    public void setUpTableView(Context context) {
+        // medication table
+        TableLayout medTable = (TableLayout) findViewById(R.id.patientProfileMedicationTable);
+        for (Medication medication : medicationList) {
+            Log.d(ACTIVITY_NAME, "Found medication " + medication.getName());
+            TableRow row = new TableRow(context);
+            row.setLayoutParams(
+                    new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            TextView tvMedication = new TextView(context);
+            tvMedication.setTextColor(Color.BLACK);
+            tvMedication.setText(medication.getName());
+            row.addView(tvMedication);
+            medTable.addView(row,
+                    new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        }
     }
 
 

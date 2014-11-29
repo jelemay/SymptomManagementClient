@@ -17,7 +17,8 @@
         <TextView
             android:text="@string/name_doctor"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:id="@+id/txtDoctorName" />
     </LinearLayout>
 
     <LinearLayout
