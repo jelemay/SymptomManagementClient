@@ -45,6 +45,8 @@ public class DoctorUpdateMedicationsActivity extends Activity {
     private final String MEDICATION_TAG = "tableMedication";
     private final String MED_EXISTS_MESSAGE = "This medication has already been added.";
 
+    private static final int DASH_BUTTON = 0;
+
     private Patient patient;
     private Doctor doctor;
     private Spinner medicationSpinner;
@@ -252,6 +254,7 @@ public class DoctorUpdateMedicationsActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.doctor_update_medications, menu);
+        menu.add(0, DASH_BUTTON, 0, R.string.menu_doctor_dashboard);
         return true;
     }
 
@@ -264,6 +267,15 @@ public class DoctorUpdateMedicationsActivity extends Activity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == DASH_BUTTON) {
+            goToDoctorDashboard();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void goToDoctorDashboard() {
+        Intent intent = new Intent(this, DoctorDashboardActivity.class);
+        intent.putExtra("DOCTOR", doctor);
+        startActivity(intent);
     }
 }

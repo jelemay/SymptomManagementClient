@@ -20,6 +20,8 @@ public class DoctorDashboardActivity extends Activity implements OnFragmentInter
 
     public static final String ACTIVITY_NAME = "Doctor Dashboard Activity: ";
 
+    private static final int DASH_BUTTON = 0;
+
     private DoctorDashboardFragment doctorInfoFragment;
     private Doctor doctor;
 
@@ -52,6 +54,7 @@ public class DoctorDashboardActivity extends Activity implements OnFragmentInter
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.doctor_dashboard, menu);
+        menu.add(0, DASH_BUTTON, 0, R.string.menu_doctor_dashboard);
         return true;
     }
 
@@ -64,7 +67,16 @@ public class DoctorDashboardActivity extends Activity implements OnFragmentInter
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == DASH_BUTTON) {
+            goToDoctorDashboard();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void goToDoctorDashboard() {
+        Intent intent = new Intent(this, DoctorDashboardActivity.class);
+        intent.putExtra("DOCTOR", doctor);
+        startActivity(intent);
     }
 
     public void onPatientListClicked(View v) {

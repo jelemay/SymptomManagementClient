@@ -36,6 +36,8 @@ public class DoctorPatientListActivity extends Activity {
 
     private static final String ACTIVITY_NAME = "Doctor Patient List Activity: ";
 
+    private static final int DASH_BUTTON = 0;
+
     private Doctor doctor;
     private ListView listView;
     private List<Patient> patientList = new ArrayList<Patient>();
@@ -126,6 +128,7 @@ public class DoctorPatientListActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.doctor_patient_list, menu);
+        menu.add(0, DASH_BUTTON, 0, R.string.menu_doctor_dashboard);
         return true;
     }
 
@@ -138,6 +141,15 @@ public class DoctorPatientListActivity extends Activity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == DASH_BUTTON) {
+            goToDoctorDashboard();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void goToDoctorDashboard() {
+        Intent intent = new Intent(this, DoctorDashboardActivity.class);
+        intent.putExtra("DOCTOR", doctor);
+        startActivity(intent);
     }
 }
