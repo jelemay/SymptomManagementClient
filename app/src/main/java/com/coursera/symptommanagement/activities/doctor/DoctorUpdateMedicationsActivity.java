@@ -236,6 +236,11 @@ public class DoctorUpdateMedicationsActivity extends Activity {
                         DoctorUpdateMedicationsActivity.this,
                         "Saved medications.",
                         Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(getApplicationContext(), DoctorPatientProfileActivity.class);
+                patient.setDoctor(doctor);
+                intent.putExtra("PATIENT", patient);
+                startActivity(intent);
             }
 
             @Override
