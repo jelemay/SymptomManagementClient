@@ -1,6 +1,8 @@
 package com.coursera.symptommanagement.models;
 
-public class PatientRequest {
+import java.io.Serializable;
+
+public class PatientRequest implements Serializable {
 
     private String firstName;
     private String lastName;

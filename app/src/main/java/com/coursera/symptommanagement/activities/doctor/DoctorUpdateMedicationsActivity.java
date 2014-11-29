@@ -21,11 +21,22 @@ import android.widget.Toast;
 
 import com.coursera.symptommanagement.R;
 import com.coursera.symptommanagement.adapters.MedicationListAdapter;
+import com.coursera.symptommanagement.models.Doctor;
 import com.coursera.symptommanagement.models.Medication;
 import com.coursera.symptommanagement.models.Patient;
+import com.coursera.symptommanagement.models.PatientMedicationRequest;
+import com.coursera.symptommanagement.services.DoctorServiceAPI;
+import com.coursera.symptommanagement.services.PatientService;
+import com.coursera.symptommanagement.services.PatientServiceAPI;
+import com.coursera.symptommanagement.task.CallableTask;
+import com.coursera.symptommanagement.task.SvcStore;
+import com.coursera.symptommanagement.task.TaskCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class DoctorUpdateMedicationsActivity extends Activity {
 
@@ -34,32 +45,26 @@ public class DoctorUpdateMedicationsActivity extends Activity {
     private final String MEDICATION_TAG = "tableMedication";
     private final String MED_EXISTS_MESSAGE = "This medication has already been added.";
 
+    private Patient patient;
+    private Doctor doctor;
+    private Spinner medicationSpinner;
+    private List<Medication> medicationList = new ArrayList<Medication>();
+    private Map<String,Medication> medicationMap = new HashMap<String, Medication>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doctor_update_medications);
 
         Intent intent = getIntent();
-        final Patient patient = (Patient) intent.getSerializableExtra("PATIENT");
+        patient = (Patient) intent.getSerializableExtra("PATIENT");
+        doctor = (Doctor) intent.getSerializableExtra("DOCTOR");
 
         // spinner with all available medications
-        Spinner medicationSpinner = (Spinner) findViewById(R.id.spinnerMedications);
-        ArrayList<Medication> medications = (ArrayList<Medication>) getMedicationList();
+        medicationSpinner = (Spinner) findViewById(R.id.spinnerMedications);
 
-        medicationSpinner.setAdapter(new MedicationListAdapter(this, R.layout.item_medication,
-                medications));
-
-        medicationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
+        // grab all medications from server
+        getAllMedications();
 
         // table containing medications assigned to patient
         ArrayList<Medication> patientMeds = (ArrayList<Medication>) patient.getMedications();
@@ -149,19 +154,98 @@ public class DoctorUpdateMedicationsActivity extends Activity {
         }
     }
 
+    public void getAllMedications() {
+        final DoctorServiceAPI doctorService = SvcStore.getDoctorService();
 
-    public List<Medication> getMedicationList() {
-        List<Medication> medications = new ArrayList<Medication>();
-        medications.add(new Medication(1L, "OxyContin"));
-        medications.add(new Medication(2L, "Hydrocodone"));
-        medications.add(new Medication(3L, "Percocet"));
-        medications.add(new Medication(4L, "Vicodin"));
-        medications.add(new Medication(5L, "Methadone"));
-        return medications;
+        CallableTask.invoke(new Callable<List<Medication>>() {
+            @Override
+            public List<Medication> call() throws Exception {
+                return doctorService.getMedicationList(doctor.getId());
+            }
+        }, new TaskCallback<List<Medication>>() {
+            @Override
+            public void success(List<Medication> medications) {
+                medicationList.addAll(medications);
+                medicationMap = createMedicationMap(medications);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        medicationSpinner.setAdapter(new MedicationListAdapter(getBaseContext(),
+                                R.layout.item_medication,
+                                (ArrayList<Medication>) medicationList));
+                    }
+                });
+            }
+
+            @Override
+            public void error(Exception e) {
+                Log.e(ACTIVITY_NAME, "Error pulling medication list from server.", e);
+                Toast.makeText(
+                        DoctorUpdateMedicationsActivity.this,
+                        "Could not pull medications.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }, this);
     }
+
+    public Map<String,Medication> createMedicationMap(List<Medication> medications) {
+        Map<String,Medication> medMap = new HashMap<String,Medication>();
+        for (Medication med : medications) {
+            medMap.put(med.getName(), med);
+        }
+        return medMap;
+    }
+
 
     public void savePatientMedications(View view) {
         Log.d(ACTIVITY_NAME, "Saving patient medications...");
+        final PatientServiceAPI patientService = SvcStore.getPatientService();
+
+        List<Medication> newMedList = new ArrayList<Medication>();
+
+        final TableLayout medTable = (TableLayout) findViewById(R.id.updateMedicationsTable);
+        for (int i = 0; i < medTable.getChildCount(); i++) {
+            TableRow row = (TableRow) medTable.getChildAt(i);
+            TextView foundMed = (TextView) row.findViewWithTag(MEDICATION_TAG);
+            String medName = foundMed.getText().toString();
+            newMedList.add(medicationMap.get(medName));
+        }
+
+        for (Medication m : newMedList) {
+            Log.d(ACTIVITY_NAME, "Added medication " + m.getName() + " to new saved list.");
+        }
+
+        // create request
+        final PatientMedicationRequest request = new PatientMedicationRequest(newMedList);
+
+        CallableTask.invoke(new Callable<Patient>() {
+            @Override
+            public Patient call() throws Exception {
+                return patientService.savePatientMedications(patient.getId(), request);
+            }
+        }, new TaskCallback<Patient>() {
+            @Override
+            public void success(Patient patient) {
+
+                Log.d(ACTIVITY_NAME, "Successfully saved patient " + patient.getFirstName()
+                                            + " " + patient.getLastName());
+                Toast.makeText(
+                        DoctorUpdateMedicationsActivity.this,
+                        "Saved medications.",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void error(Exception e) {
+                Log.e(ACTIVITY_NAME, "Error saving new medication list.", e);
+                Toast.makeText(
+                        DoctorUpdateMedicationsActivity.this,
+                        "Could not save medications.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }, this);
+
     }
 
     @Override

@@ -52,7 +52,11 @@ public class DoctorPatientProfileActivity extends Activity {
         patient = (Patient) intent.getSerializableExtra("PATIENT");
         doctor = patient.getDoctor();
 
+        // pull medications from server
         getMedicationList(patient);
+
+        // add medications to patient
+        patient.setMedications(medicationList);
 
         Log.d(ACTIVITY_NAME, "Entered patient profile: " + patient.getFirstName() + " " +
                                 patient.getLastName() + " with Doctor: " + doctor.getFirstName()
@@ -68,25 +72,6 @@ public class DoctorPatientProfileActivity extends Activity {
         TextView tvMedicalRecordId = (TextView) findViewById(R.id.patientProfileMedicalRecordId);
         tvMedicalRecordId.setText(patient.getMedicalRecordId());
 
-
-        //ArrayList<Medication> medications = (ArrayList<Medication>) patient.getMedications();
-
-        Log.d(ACTIVITY_NAME, "Finished grabbing medications");
-
-//        // medication table
-//        TableLayout medTable = (TableLayout) findViewById(R.id.patientProfileMedicationTable);
-//        for (Medication medication : medicationList) {
-//            Log.d(ACTIVITY_NAME, "Found medication " + medication.getName());
-//            TableRow row = new TableRow(this);
-//            row.setLayoutParams(
-//                    new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-//            TextView tvMedication = new TextView(this);
-//            tvMedication.setText(medication.getName());
-//            row.addView(tvMedication);
-//            medTable.addView(row,
-//                    new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-//        }
-
         // buttons
         btnUpdateMedications = (Button) findViewById(R.id.buttonPatientProfileUpdateMedication);
         btnUpdateMedications.setOnClickListener(new View.OnClickListener() {
@@ -94,6 +79,7 @@ public class DoctorPatientProfileActivity extends Activity {
             public void onClick(View view) {
                 Intent medIntent = new Intent(getApplicationContext(), DoctorUpdateMedicationsActivity.class);
                 medIntent.putExtra("PATIENT", patient);
+                medIntent.putExtra("DOCTOR", doctor);
                 startActivity(medIntent);
             }
         });
@@ -115,18 +101,6 @@ public class DoctorPatientProfileActivity extends Activity {
         });
 
     }
-
-//    public List<String> getMedicationList() {
-//        List<String> medications = new ArrayList<String>();
-//        medications.add("Oxycontin");
-//        medications.add("Morphine");
-//        medications.add("Advil");
-//        //medications.add("Tylenol");
-//        //medications.add("Seroquel");
-//        //medications.add("Lithium");
-//        //medications.add("Levothyroxine");
-//        return medications;
-//    }
 
     public void getMedicationList(final Patient patient) {
         final PatientServiceAPI patientService = SvcStore.getPatientService();

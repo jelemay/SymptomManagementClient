@@ -3,6 +3,7 @@ package com.coursera.symptommanagement.services;
 
 import com.coursera.symptommanagement.models.Doctor;
 import com.coursera.symptommanagement.models.DoctorRequest;
+import com.coursera.symptommanagement.models.Medication;
 import com.coursera.symptommanagement.models.Patient;
 import com.coursera.symptommanagement.models.PatientRequest;
 
@@ -47,6 +48,9 @@ public interface DoctorServiceAPI {
 
     @GET(SVC_PATH + "/{doctorId}/patients")
     public List<Patient> getPatientList(@Path("doctorId") Long id);
+
+    @GET(SVC_PATH + "/{doctorId}/medications")
+    public List<Medication> getMedicationList(@Path("doctorId") Long id);
 
     @POST(SVC_PATH +"/doctor/{doctorId}")
     public Doctor addPatientToDoctor(@Body PatientRequest request, @Path("doctorId") Long id) ;
