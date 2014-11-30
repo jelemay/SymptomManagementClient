@@ -3,6 +3,7 @@
 
     <string name="app_name">SymptomManagement</string>
     <string name="menu_doctor_dashboard">Doctor Dashboard</string>
+    <string name="menu_patient_profile">Patient Profile</string>
     <string name="header_login">Please Login...</string>
     <string name="header_activity_doctor_dashboard">Doctor Dashboard</string>
     <string name="header_activity_doctor_patient_add">Add Patient</string>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +29,7 @@ import com.coursera.symptommanagement.fragments.TimePickerFragment;
 import com.coursera.symptommanagement.models.Appetite;
 import com.coursera.symptommanagement.models.Medication;
 import com.coursera.symptommanagement.models.Pain;
+import com.coursera.symptommanagement.models.Patient;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
@@ -42,6 +44,10 @@ public class PatientCheckInActivity extends Activity
 
     public static final String ACTIVITY_NAME = "Patient Check In Activity: ";
 
+    private static final int DASH_BUTTON = 0;
+
+    private Patient patient;
+
     private Spinner painSpinner;
     private Spinner appetiteSpinner;
     private LayoutInflater inflater;
@@ -50,6 +56,9 @@ public class PatientCheckInActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_check_in);
+
+        Intent intent = getIntent();
+        patient = (Patient) intent.getSerializableExtra("PATIENT");
 
         inflater = LayoutInflater.from(this);
 
@@ -235,6 +244,7 @@ public class PatientCheckInActivity extends Activity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.patient_check_in, menu);
+        menu.add(0, DASH_BUTTON, 0, R.string.menu_patient_profile);
         return true;
     }
 
@@ -247,6 +257,15 @@ public class PatientCheckInActivity extends Activity
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == DASH_BUTTON) {
+            goToPatientDashboard();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void goToPatientDashboard() {
+        Intent intent = new Intent(this, PatientProfileActivity.class);
+        intent.putExtra("PATIENT", patient);
+        startActivity(intent);
     }
 }

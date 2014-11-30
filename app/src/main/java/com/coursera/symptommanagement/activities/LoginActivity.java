@@ -160,9 +160,6 @@ public class LoginActivity extends Activity {
                 Intent doctorIntent = new Intent(LoginActivity.this, DoctorDashboardActivity.class);
                 doctorIntent.putExtra("DOCTOR", resultIn);
 
-                //Remove below  - test of createUser
-                //UserCreateTest.create();
-
                 startActivity(doctorIntent);
             }
 
@@ -196,9 +193,9 @@ public class LoginActivity extends Activity {
             public void success(Patient result) {
 
                 Patient resultIn = result;
-                Doctor doctor = result.getDoctor();
+                //Doctor doctor = result.getDoctor();
                 Log.d(ACTIVITY_NAME, "Retrieved patient: " + resultIn.toString());
-                Log.d(ACTIVITY_NAME, "Retrieved doctor: " + doctor.toString());
+                //Log.d(ACTIVITY_NAME, "Retrieved doctor: " + doctor.toString());
 
                 Intent patientIntent = new Intent(LoginActivity.this, PatientProfileActivity.class);
                 patientIntent.putExtra("PATIENT", resultIn);
@@ -216,18 +213,6 @@ public class LoginActivity extends Activity {
                         Toast.LENGTH_SHORT).show();
             }
         }, this);
-    }
-
-    public List<Medication> getMedicationList() {
-        List<Medication> medications = new ArrayList<Medication>();
-        medications.add(new Medication(1L, "OxyContin"));
-        medications.add(new Medication(2L, "Hydrocodone"));
-        medications.add(new Medication(3L, "Percocet"));
-        medications.add(new Medication(4L, "Oxycodone"));
-        medications.add(new Medication(5L, "Vicodin"));
-        medications.add(new Medication(6L, "Methadone"));
-        medications.add(new Medication(7L, "Naproxen"));
-        return medications;
     }
 
 }
