@@ -384,7 +384,10 @@ public class PatientCheckInActivity extends Activity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
+                        Toast.makeText(
+                                PatientCheckInActivity.this,
+                                "Saved Check In.",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
             }
