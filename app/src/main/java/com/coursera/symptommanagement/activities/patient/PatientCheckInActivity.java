@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -20,16 +22,24 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.coursera.symptommanagement.R;
+import com.coursera.symptommanagement.activities.doctor.DoctorPatientProfileActivity;
 import com.coursera.symptommanagement.adapters.AppetiteListAdapter;
 import com.coursera.symptommanagement.adapters.PainListAdapter;
 import com.coursera.symptommanagement.fragments.DatePickerFragment;
 import com.coursera.symptommanagement.fragments.TimePickerFragment;
 import com.coursera.symptommanagement.models.Appetite;
+import com.coursera.symptommanagement.models.CheckInRequest;
 import com.coursera.symptommanagement.models.Medication;
+import com.coursera.symptommanagement.models.MedicationEvent;
 import com.coursera.symptommanagement.models.Pain;
 import com.coursera.symptommanagement.models.Patient;
+import com.coursera.symptommanagement.services.PatientServiceAPI;
+import com.coursera.symptommanagement.task.CallableTask;
+import com.coursera.symptommanagement.task.SvcStore;
+import com.coursera.symptommanagement.task.TaskCallback;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
@@ -37,6 +47,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class PatientCheckInActivity extends Activity
         implements TimePickerFragment.TimePickerFragmentListener,
@@ -47,6 +58,11 @@ public class PatientCheckInActivity extends Activity
     private static final int DASH_BUTTON = 0;
 
     private Patient patient;
+    private List<Medication> medicationList = new ArrayList<Medication>();
+    private Map<String,Medication> medicationMap = new HashMap<String,Medication>();
+
+    private Pain pain;
+    private Appetite appetite;
 
     private Spinner painSpinner;
     private Spinner appetiteSpinner;
@@ -67,6 +83,13 @@ public class PatientCheckInActivity extends Activity
         ArrayList<Pain> painList = (ArrayList<Pain>) getPainList();
 
         painSpinner.setAdapter(new PainListAdapter(this, R.layout.item_pain, painList));
+        painSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                pain = (Pain) parent.getItemAtPosition(pos);
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         // spinner with all available appetite designations
         appetiteSpinner = (Spinner) findViewById(R.id.spinnerAppetite);
@@ -74,6 +97,13 @@ public class PatientCheckInActivity extends Activity
 
         appetiteSpinner.setAdapter(new AppetiteListAdapter(this, R.layout.item_appetite,
                                     appetiteList));
+        appetiteSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                appetite = (Appetite) parent.getItemAtPosition(pos);
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         // set pain question
         TextView painTextQuestion = (TextView) findViewById(R.id.painQuestion);
@@ -83,59 +113,8 @@ public class PatientCheckInActivity extends Activity
         TextView appTextQuestion = (TextView) findViewById(R.id.appetiteQuestion);
         appTextQuestion.setText("Does your pain stop you from eating/drinking?");
 
-        // pain medication yes/no questions
-        ArrayList<Medication> medList = (ArrayList<Medication>) getMedicationList();
-        final TableLayout table = (TableLayout) findViewById(R.id.tableMedQuestions);
-
-        for (Medication med : medList) {
-
-            final View row = inflater.inflate(R.layout.item_medication_question, table, false);
-
-            final TextView medName = (TextView) row.findViewById(R.id.txtMedName);
-            medName.setText(med.getName() + "?");
-
-            final LinearLayout medTimeDate = (LinearLayout) row.findViewById(R.id.medDateTimeLayout);
-            medTimeDate.setTag("MedTimeDate" + medName);
-            medTimeDate.setVisibility(View.GONE);
-
-            // assign IDs for date/time fields to keep them unique
-            final TextView txtTime = (TextView) medTimeDate.findViewById(R.id.txtTime);
-            txtTime.setTag("txtTime" + med.getName());
-            final Button btnTime = (Button) medTimeDate.findViewById(R.id.btnTime);
-            btnTime.setTag("btnTime" + med.getName());
-            btnTime.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showTimePickerDialog(view);
-                }
-            });
-
-            final TextView txtDate = (TextView) medTimeDate.findViewById(R.id.txtDate);
-            txtDate.setTag("txtDate" + med.getName());
-            final Button btnDate = (Button) medTimeDate.findViewById(R.id.btnDate);
-            btnDate.setTag("btnDate" + med.getName());
-            btnDate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showDatePickerDialog(view);
-                }
-            });
-
-            final RadioGroup radioGroup = (RadioGroup) row.findViewById(R.id.radGroupMed);
-            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                    if (checkedId == R.id.radMedYes) {
-                        medTimeDate.setVisibility(View.VISIBLE);
-                    }
-                    else if (checkedId == R.id.radMedNo) {
-                        medTimeDate.setVisibility(View.GONE);
-                    }
-                }
-            });
-
-            table.addView(row);
-        }
+        // set up medication questions from server
+        getMedicationList(patient);
 
     }
 
@@ -228,14 +207,198 @@ public class PatientCheckInActivity extends Activity
         return appetiteList;
     }
 
-    public List<Medication> getMedicationList() {
-        List<Medication> medications = new ArrayList<Medication>();
-        medications.add(new Medication(1L, "OxyContin"));
-        medications.add(new Medication(2L, "Hydrocodone"));
-        medications.add(new Medication(3L, "Percocet"));
-        medications.add(new Medication(4L, "Vicodin"));
-        medications.add(new Medication(5L, "Methadone"));
-        return medications;
+    public void getMedicationList(final Patient patient) {
+        final PatientServiceAPI patientService = SvcStore.getPatientService();
+
+        CallableTask.invoke(new Callable<List<Medication>>() {
+            @Override
+            public List<Medication> call() throws Exception {
+                return patientService.getPatientMedications(patient.getId());
+            }
+        }, new TaskCallback<List<Medication>>() {
+
+            @Override
+            public void success(final List<Medication> medications) {
+                medicationMap = createMedicationMap(medications);
+                medicationList.addAll(medications);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setUpTableView(getBaseContext(), medications);
+                    }
+                });
+            }
+
+            @Override
+            public void error(Exception e) {
+                Log.e(ACTIVITY_NAME, "Error pulling medication list from patient.", e);
+                Toast.makeText(
+                        PatientCheckInActivity.this,
+                        "Could not pull patient medications.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }, this);
+    }
+
+    public Map<String,Medication> createMedicationMap(List<Medication> medications) {
+        Map<String,Medication> medMap = new HashMap<String,Medication>();
+        for (Medication med : medications) {
+            medMap.put(med.getName(), med);
+        }
+        return medMap;
+    }
+
+    public void setUpTableView(Context context, List<Medication> medList) {
+        final TableLayout table = (TableLayout) findViewById(R.id.tableMedQuestions);
+
+        for (Medication med : medList) {
+
+            final View row = inflater.inflate(R.layout.item_medication_question, table, false);
+
+            final TextView medName = (TextView) row.findViewById(R.id.txtMedName);
+            medName.setText(med.getName() + "?");
+
+            final LinearLayout medTimeDate = (LinearLayout) row.findViewById(R.id.medDateTimeLayout);
+            medTimeDate.setTag("MedTimeDate" + medName);
+            medTimeDate.setVisibility(View.GONE);
+
+            // assign IDs for date/time fields to keep them unique
+            final TextView txtTime = (TextView) medTimeDate.findViewById(R.id.txtTime);
+            txtTime.setTag("txtTime" + med.getName());
+            final Button btnTime = (Button) medTimeDate.findViewById(R.id.btnTime);
+            btnTime.setTag("btnTime" + med.getName());
+            btnTime.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showTimePickerDialog(view);
+                }
+            });
+
+            final TextView txtDate = (TextView) medTimeDate.findViewById(R.id.txtDate);
+            txtDate.setTag("txtDate" + med.getName());
+            final Button btnDate = (Button) medTimeDate.findViewById(R.id.btnDate);
+            btnDate.setTag("btnDate" + med.getName());
+            btnDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showDatePickerDialog(view);
+                }
+            });
+
+            final RadioGroup radioGroup = (RadioGroup) row.findViewById(R.id.radGroupMed);
+            radioGroup.setTag("radioGroup" + med.getName());
+            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                    if (checkedId == R.id.radMedYes) {
+                        medTimeDate.setVisibility(View.VISIBLE);
+                    }
+                    else if (checkedId == R.id.radMedNo) {
+                        medTimeDate.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+            table.addView(row);
+        }
+    }
+
+    public void savePatientCheckIn(View view) {
+
+        String strPain = pain.getDescription();
+        String strAppetite = appetite.getDescription();
+        List<MedicationEvent> medEventList = new ArrayList<MedicationEvent>();
+
+        Log.d(ACTIVITY_NAME, "Found pain: " + strPain);
+        Log.d(ACTIVITY_NAME, "Found appetite: " + strAppetite);
+
+        final TableLayout table = (TableLayout) findViewById(R.id.tableMedQuestions);
+
+        for (Medication m : medicationList) {
+            String medName = m.getName();
+            RadioGroup rg = (RadioGroup) table.findViewWithTag("radioGroup" + medName);
+            int checked = rg.getCheckedRadioButtonId();
+
+            if (checked == R.id.radMedYes) {
+                Log.d(ACTIVITY_NAME, "Patient took medication " + medName);
+                TextView tvTime = (TextView) table.findViewWithTag("txtTime" + medName);
+                String strTime = tvTime.getText().toString();
+                String hour = strTime.substring(0,strTime.indexOf(":"));
+                String minute = strTime.substring(strTime.indexOf(":") + 1, strTime.indexOf(" "));
+                String am_pm = strTime.substring(strTime.indexOf(" ") + 1);
+                Log.d(ACTIVITY_NAME, "Found time: " + hour + " " + minute + " " + am_pm);
+                TextView tvDate = (TextView) table.findViewWithTag("txtDate" + medName);
+                String strDate = tvDate.getText().toString();
+                String month = strDate.substring(0,2);
+                String day = strDate.substring(3,5);
+                String year = strDate.substring(6,strDate.length());
+                Log.d(ACTIVITY_NAME, "Found date: " + month + " " + day + " " + year);
+
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.YEAR, Integer.valueOf(year));
+                cal.set(Calendar.MONTH, Integer.valueOf(month));
+                cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(day));
+                cal.set(Calendar.HOUR, Integer.valueOf(hour));
+                cal.set(Calendar.MINUTE, Integer.valueOf(minute));
+
+                if (am_pm.equalsIgnoreCase("AM")) {
+                    cal.set(Calendar.AM_PM, Calendar.AM);
+                }
+                else {
+                    cal.set(Calendar.AM_PM, Calendar.PM);
+                }
+
+                Long medicationTime = cal.getTimeInMillis();
+
+                MedicationEvent medEvent = new MedicationEvent(m, medicationTime);
+                medEventList.add(medEvent);
+
+            } else if (checked == R.id.radMedNo) {
+                continue;
+            }
+        }
+
+        // get current time
+        Calendar now = Calendar.getInstance();
+
+        final CheckInRequest checkIn = new CheckInRequest();
+        checkIn.setAppetite(strAppetite);
+        checkIn.setPain(strPain);
+        checkIn.setTime(now.getTimeInMillis());
+        checkIn.setMedicationEventList(medEventList);
+
+        final PatientServiceAPI patientService = SvcStore.getPatientService();
+
+        CallableTask.invoke(new Callable<Patient>() {
+            @Override
+            public Patient call() throws Exception {
+                return patientService.savePatientCheckIn(patient.getId(), checkIn);
+            }
+        }, new TaskCallback<Patient>() {
+
+            @Override
+            public void success(final Patient patient) {
+
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                });
+            }
+
+            @Override
+            public void error(Exception e) {
+                Log.e(ACTIVITY_NAME, "Error saving Check In.", e);
+                Toast.makeText(
+                        PatientCheckInActivity.this,
+                        "Could not save Check In.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }, this);
+
     }
 
     @Override

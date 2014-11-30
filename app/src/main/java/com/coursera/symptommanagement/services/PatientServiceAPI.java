@@ -1,5 +1,6 @@
 package com.coursera.symptommanagement.services;
 
+import com.coursera.symptommanagement.models.CheckInRequest;
 import com.coursera.symptommanagement.models.Doctor;
 import com.coursera.symptommanagement.models.Medication;
 import com.coursera.symptommanagement.models.Patient;
@@ -60,6 +61,9 @@ public interface PatientServiceAPI {
 
     @POST(SVC_PATH + "/{patientId}/reminders")
     public Patient savePatientReminders(@Path("patientId") Long id, @Body PatientReminderRequest request);
+
+    @POST(SVC_PATH + "/{patientId}/checkIn")
+    public Patient savePatientCheckIn(@Path("patientId") Long id, @Body CheckInRequest request);
 
     @GET(SVC_PATH +"/username/{username}")
     public Patient getPatientByUsername(@Path("username") String username);
