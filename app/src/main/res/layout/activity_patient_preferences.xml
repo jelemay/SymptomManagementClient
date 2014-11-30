@@ -54,6 +54,13 @@
                     android:layout_marginLeft="@dimen/activity_horizontal_margin_2x"
                     android:layout_weight="1" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/txtReminderOneLong"
+                    android:visibility="invisible" />
+
                 <Button
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
@@ -86,6 +93,13 @@
                     android:id="@+id/txtReminderTwo"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin_2x"
                     android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/txtReminderTwoLong"
+                    android:visibility="invisible" />
 
                 <Button
                     style="?android:attr/buttonStyleSmall"
@@ -120,6 +134,13 @@
                     android:layout_marginLeft="@dimen/activity_horizontal_margin_2x"
                     android:layout_weight="1" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/txtReminderThreeLong"
+                    android:visibility="invisible" />
+
                 <Button
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
@@ -152,6 +173,13 @@
                     android:id="@+id/txtReminderFour"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin_2x"
                     android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/txtReminderFourLong"
+                    android:visibility="invisible" />
 
                 <Button
                     style="?android:attr/buttonStyleSmall"

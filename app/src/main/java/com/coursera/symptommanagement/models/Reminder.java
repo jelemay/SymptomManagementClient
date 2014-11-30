@@ -14,6 +14,10 @@ public class Reminder implements Serializable {
 
     public Reminder() {}
 
+    public Reminder(Long time) {
+        this.time = time;
+    }
+
     public Reminder(Long id, Long time) {
         this.id = id;
         this.time = time;

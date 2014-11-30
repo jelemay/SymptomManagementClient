@@ -129,7 +129,7 @@ public class TimePickerFragment extends DialogFragment
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface TimePickerFragmentListener {
-        public String getTimeString(int buttonId, int hourOfDay, int minute);
+        public void getTimeString(int buttonId, int hourOfDay, int minute);
         public String getTimeString(String btnTag, int hourOfDay, int minute);
     }
 

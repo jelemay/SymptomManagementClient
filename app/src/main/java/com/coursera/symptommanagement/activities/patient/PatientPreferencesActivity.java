@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.coursera.symptommanagement.R;
 import com.coursera.symptommanagement.fragments.TimePickerFragment;
 import com.coursera.symptommanagement.models.Patient;
+import com.coursera.symptommanagement.models.PatientReminderRequest;
 import com.coursera.symptommanagement.models.Reminder;
 import com.coursera.symptommanagement.receivers.ReminderAlarmReceiver;
 import com.coursera.symptommanagement.services.PatientServiceAPI;
@@ -40,7 +41,7 @@ public class PatientPreferencesActivity extends Activity
 
     private static final int DASH_BUTTON = 0;
 
-    private Button btnReminderOne;
+    private int uniqueAlarmIndex = 0;
 
     private Patient patient;
 
@@ -85,23 +86,33 @@ public class PatientPreferencesActivity extends Activity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        List<String> times = new ArrayList<String>();
-                        for (Reminder r : reminders) {
-                            String time = getTimeFromLong(r.getTime());
-                            times.add(time);
-                        }
 
+                        ArrayList<Reminder> reminderList = new ArrayList<Reminder>(reminders);
+
+                        Reminder reminderOne = reminderList.get(0);
                         TextView txtReminderOne = (TextView) findViewById(R.id.txtReminderOne);
-                        txtReminderOne.setText(times.get(0));
+                        txtReminderOne.setText(getTimeFromLong(reminderOne.getTime()));
+                        TextView txtReminderOneLong = (TextView) findViewById(R.id.txtReminderOneLong);
+                        txtReminderOneLong.setText(String.valueOf(reminderOne.getTime()));
 
+                        Reminder reminderTwo = reminderList.get(1);
                         TextView txtReminderTwo = (TextView) findViewById(R.id.txtReminderTwo);
-                        txtReminderTwo.setText(times.get(1));
+                        txtReminderTwo.setText(getTimeFromLong(reminderTwo.getTime()));
+                        TextView txtReminderTwoLong = (TextView) findViewById(R.id.txtReminderTwoLong);
+                        txtReminderTwoLong.setText(String.valueOf(reminderTwo.getTime()));
 
+                        Reminder reminderThree = reminderList.get(2);
                         TextView txtReminderThree = (TextView) findViewById(R.id.txtReminderThree);
-                        txtReminderThree.setText(times.get(2));
+                        txtReminderThree.setText(getTimeFromLong(reminderThree.getTime()));
+                        TextView txtReminderThreeLong = (TextView) findViewById(R.id.txtReminderThreeLong);
+                        txtReminderThreeLong.setText(String.valueOf(reminderThree.getTime()));
 
+                        Reminder reminderFour = reminderList.get(3);
                         TextView txtReminderFour = (TextView) findViewById(R.id.txtReminderFour);
-                        txtReminderFour.setText(times.get(3));
+                        txtReminderFour.setText(getTimeFromLong(reminderFour.getTime()));
+                        TextView txtReminderFourLong = (TextView) findViewById(R.id.txtReminderFourLong);
+                        txtReminderFourLong.setText(String.valueOf(reminderFour.getTime()));
+
                     }
                 });
             }
@@ -139,9 +150,7 @@ public class PatientPreferencesActivity extends Activity
             minuteString = "0" + minuteString;
         }
 
-        String timeString = hourString + ":" + minuteString + " " + am_pm;
-
-        return timeString;
+        return hourString + ":" + minuteString + " " + am_pm;
     }
 
     public void showTimePickerDialog(View v) {
@@ -149,7 +158,7 @@ public class PatientPreferencesActivity extends Activity
         timePicker.show(getFragmentManager(), "timePicker");
     }
 
-    public String getTimeString(int buttonId, int hourOfDay, int minute) {
+    public void getTimeString(int buttonId, int hourOfDay, int minute) {
         String am_pm = "";
 
         Calendar time = Calendar.getInstance();
@@ -160,18 +169,10 @@ public class PatientPreferencesActivity extends Activity
         if (time.get(Calendar.AM_PM) == Calendar.AM) {
             am_pm = "AM";
             time.set(Calendar.AM_PM, Calendar.AM);
-        }
-        else {
+        } else {
             am_pm = "PM";
             time.set(Calendar.AM_PM, Calendar.PM);
         }
-
-        // set up alarm manager
-        Intent checkInIntent = new Intent(this, ReminderAlarmReceiver.class);
-        PendingIntent operation = PendingIntent.getBroadcast(this, 0, checkInIntent, 0);
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC, time.getTimeInMillis(), operation);
 
         // prepare time string to pass to text field
         String hourString = (time.get(Calendar.HOUR) == 0) ? "12" : time.get(Calendar.HOUR) + "";
@@ -188,25 +189,36 @@ public class PatientPreferencesActivity extends Activity
                 Log.d(ACTIVITY_NAME, "Updating time in Reminder One: " + timeString);
                 TextView reminderOne = (TextView) findViewById(R.id.txtReminderOne);
                 reminderOne.setText(timeString);
+                TextView reminderOneLong = (TextView) findViewById(R.id.txtReminderOneLong);
+                reminderOneLong.setText(String.valueOf(time.getTimeInMillis()));
                 break;
             case R.id.btnReminderTwo:
                 Log.d(ACTIVITY_NAME, "Updating time in Reminder Two: " + timeString);
                 TextView reminderTwo = (TextView) findViewById(R.id.txtReminderTwo);
                 reminderTwo.setText(timeString);
+                TextView reminderTwoLong = (TextView) findViewById(R.id.txtReminderTwoLong);
+                reminderTwoLong.setText(String.valueOf(time.getTimeInMillis()));
                 break;
             case R.id.btnReminderThree:
                 Log.d(ACTIVITY_NAME, "Updating time in Reminder Three: " + timeString);
                 TextView reminderThree = (TextView) findViewById(R.id.txtReminderThree);
                 reminderThree.setText(timeString);
+                TextView reminderThreeLong = (TextView) findViewById(R.id.txtReminderThreeLong);
+                reminderThreeLong.setText(String.valueOf(time.getTimeInMillis()));
                 break;
             case R.id.btnReminderFour:
                 Log.d(ACTIVITY_NAME, "Updating time in Reminder Four: " + timeString);
                 TextView reminderFour = (TextView) findViewById(R.id.txtReminderFour);
                 reminderFour.setText(timeString);
+                TextView reminderFourLong = (TextView) findViewById(R.id.txtReminderFourLong);
+                reminderFourLong.setText(String.valueOf(time.getTimeInMillis()));
+                break;
+            default:
                 break;
         }
 
-        return timeString;
+        uniqueAlarmIndex++;
+
     }
 
     public String getTimeString(String buttonTag, int hourOfDay, int minute) {
@@ -214,38 +226,93 @@ public class PatientPreferencesActivity extends Activity
     }
 
     public void savePatientReminders(View v) {
-        TextView tvReminderOne = (TextView) findViewById(R.id.txtReminderOne);
-        TextView tvReminderTwo = (TextView) findViewById(R.id.txtReminderTwo);
-        TextView tvReminderThree = (TextView) findViewById(R.id.txtReminderThree);
-        TextView tvReminderFour = (TextView) findViewById(R.id.txtReminderFour);
+        final PatientServiceAPI patientService = SvcStore.getPatientService();
 
-        String reminderOne = tvReminderOne.getText().toString();
-        String reminderTwo = tvReminderTwo.getText().toString();
-        String reminderThree = tvReminderThree.getText().toString();
-        String reminderFour = tvReminderFour.getText().toString();
+        TextView tvReminderOneLong = (TextView) findViewById(R.id.txtReminderOneLong);
+        TextView tvReminderTwoLong = (TextView) findViewById(R.id.txtReminderTwoLong);
+        TextView tvReminderThreeLong = (TextView) findViewById(R.id.txtReminderThreeLong);
+        TextView tvReminderFourLong = (TextView) findViewById(R.id.txtReminderFourLong);
+
+        String reminderOne = tvReminderOneLong.getText().toString();
+        String reminderTwo = tvReminderTwoLong.getText().toString();
+        String reminderThree = tvReminderThreeLong.getText().toString();
+        String reminderFour = tvReminderFourLong.getText().toString();
+
+        // set up alarm manager for each time
+        Intent checkInIntent = new Intent(this, ReminderAlarmReceiver.class);
+
+        // Reminder One
+        PendingIntent operationOne = PendingIntent.getBroadcast(this, uniqueAlarmIndex, checkInIntent,
+                PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManagerOne = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManagerOne.set(AlarmManager.RTC, Long.parseLong(reminderOne), operationOne);
+        uniqueAlarmIndex++;
+
+        // Reminder Two
+        PendingIntent operationTwo = PendingIntent.getBroadcast(this, uniqueAlarmIndex, checkInIntent,
+                PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManagerTwo = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManagerTwo.set(AlarmManager.RTC, Long.parseLong(reminderTwo), operationTwo);
+        uniqueAlarmIndex++;
+
+        // Reminder Three
+        PendingIntent operationThree = PendingIntent.getBroadcast(this, uniqueAlarmIndex, checkInIntent,
+                PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManagerThree = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManagerThree.set(AlarmManager.RTC, Long.parseLong(reminderThree), operationThree);
+        uniqueAlarmIndex++;
+
+        // Reminder Four
+        PendingIntent operationFour = PendingIntent.getBroadcast(this, uniqueAlarmIndex, checkInIntent,
+                PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManagerFour = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManagerFour.set(AlarmManager.RTC, Long.parseLong(reminderThree), operationFour);
+        uniqueAlarmIndex++;
 
         Log.d(ACTIVITY_NAME, "Found reminder: " + reminderOne);
-        Log.d(ACTIVITY_NAME, "Converted timestamp: " + getTimeStamp(reminderOne));
         Log.d(ACTIVITY_NAME, "Found reminder: " + reminderTwo);
         Log.d(ACTIVITY_NAME, "Found reminder: " + reminderThree);
         Log.d(ACTIVITY_NAME, "Found reminder: " + reminderFour);
 
-    }
+        List<Reminder> newReminders = new ArrayList<Reminder>();
+        newReminders.add(new Reminder(Long.parseLong(reminderOne)));
+        newReminders.add(new Reminder(Long.parseLong(reminderTwo)));
+        newReminders.add(new Reminder(Long.parseLong(reminderThree)));
+        newReminders.add(new Reminder(Long.parseLong(reminderFour)));
 
-    public Long getTimeStamp(String time) {
-        Long result = 0L;
-        String shortTime = time.substring(0, time.indexOf(" "));
+        final PatientReminderRequest request = new PatientReminderRequest(newReminders);
 
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            Date timeStamp = sdf.parse(shortTime);
+        CallableTask.invoke(new Callable<Patient>() {
+            @Override
+            public Patient call() throws Exception {
+                return patientService.savePatientReminders(patient.getId(), request);
+            }
+        }, new TaskCallback<Patient>() {
 
-            result = timeStamp.getTime();
+            @Override
+            public void success(final Patient patient) {
 
-        } catch (ParseException e) {
-        }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(
+                                PatientPreferencesActivity.this,
+                                "Saved reminders.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
 
-        return result;
+            @Override
+            public void error(Exception e) {
+                Log.e(ACTIVITY_NAME, "Error saving new patient reminders.", e);
+                Toast.makeText(
+                        PatientPreferencesActivity.this,
+                        "Could not save reminders.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }, this);
+
     }
 
     @Override

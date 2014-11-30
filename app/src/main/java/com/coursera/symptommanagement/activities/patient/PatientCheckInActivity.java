@@ -206,9 +206,7 @@ public class PatientCheckInActivity extends Activity
         return dateString;
     }
 
-    public String getTimeString(int buttonId, int hourOfDay, int minute) {
-        return null;
-    }
+    public void getTimeString(int buttonId, int hourOfDay, int minute) {}
 
     public String getDateString(int buttonId, int year, int month, int day) {
         return null;
