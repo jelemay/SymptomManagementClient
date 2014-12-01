@@ -18,8 +18,6 @@ public class CallableTask<T> extends AsyncTask<Void,Double,T> {
 
     private static final String TAG = CallableTask.class.getName();
 
-    private ProgressDialog dialog;
-
     public static <V> void invoke(Callable<V> call, TaskCallback<V> callback, Activity activity){
         new CallableTask<V>(call, callback, activity).execute();
     }
@@ -33,13 +31,11 @@ public class CallableTask<T> extends AsyncTask<Void,Double,T> {
     public CallableTask(Callable<T> callable, TaskCallback<T> callback, Activity context) {
         callable_ = callable;
         callback_ = callback;
-        dialog = new ProgressDialog(context);
     }
 
     @Override
     protected void onPreExecute() {
-        this.dialog.setMessage("Loading...");
-        this.dialog.show();
+
     }
 
     @Override
@@ -56,9 +52,7 @@ public class CallableTask<T> extends AsyncTask<Void,Double,T> {
 
     @Override
     protected void onPostExecute(T r) {
-        if (dialog.isShowing()) {
-            dialog.dismiss();
-        }
+
         if(error_ != null){
             callback_.error(error_);
         }

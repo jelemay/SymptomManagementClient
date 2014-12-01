@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.Date;
 import java.text.ParseException;
@@ -162,6 +163,7 @@ public class PatientPreferencesActivity extends Activity
         String am_pm = "";
 
         Calendar time = Calendar.getInstance();
+        time.setTimeInMillis(System.currentTimeMillis());
         time.set(Calendar.HOUR_OF_DAY, hourOfDay);
         time.set(Calendar.MINUTE, minute);
         time.set(Calendar.SECOND, 0);
@@ -217,8 +219,6 @@ public class PatientPreferencesActivity extends Activity
                 break;
         }
 
-        uniqueAlarmIndex++;
-
     }
 
     public String getTimeString(String buttonTag, int hourOfDay, int minute) {
@@ -238,41 +238,50 @@ public class PatientPreferencesActivity extends Activity
         String reminderThree = tvReminderThreeLong.getText().toString();
         String reminderFour = tvReminderFourLong.getText().toString();
 
+        Calendar calOne = Calendar.getInstance();
+        calOne.setTimeInMillis(Long.parseLong(reminderOne));
+
+        Calendar calTwo = Calendar.getInstance();
+        calTwo.setTimeInMillis(Long.parseLong(reminderTwo));
+
+        Calendar calThree = Calendar.getInstance();
+        calThree.setTimeInMillis(Long.parseLong(reminderThree));
+
+        Calendar calFour = Calendar.getInstance();
+        calFour.setTimeInMillis(Long.parseLong(reminderFour));
+
         // set up alarm manager for each time
         Intent checkInIntent = new Intent(this, ReminderAlarmReceiver.class);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        // Reminder One
-        PendingIntent operationOne = PendingIntent.getBroadcast(this, uniqueAlarmIndex, checkInIntent,
-                PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager alarmManagerOne = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManagerOne.set(AlarmManager.RTC, Long.parseLong(reminderOne), operationOne);
-        uniqueAlarmIndex++;
-
-        // Reminder Two
-        PendingIntent operationTwo = PendingIntent.getBroadcast(this, uniqueAlarmIndex, checkInIntent,
-                PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager alarmManagerTwo = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManagerTwo.set(AlarmManager.RTC, Long.parseLong(reminderTwo), operationTwo);
-        uniqueAlarmIndex++;
-
+//        // Reminder One
+//        PendingIntent operationOne = PendingIntent.getBroadcast(this, 0,
+//                checkInIntent, PendingIntent.FLAG_ONE_SHOT);
+//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calOne.getTimeInMillis(),
+//                AlarmManager.INTERVAL_DAY, operationOne);
+//
+//        // Reminder Two
+//        PendingIntent operationTwo = PendingIntent.getBroadcast(this, 1,
+//                checkInIntent, PendingIntent.FLAG_ONE_SHOT);
+//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calTwo.getTimeInMillis(),
+//                AlarmManager.INTERVAL_DAY, operationTwo);
+//
         // Reminder Three
-        PendingIntent operationThree = PendingIntent.getBroadcast(this, uniqueAlarmIndex, checkInIntent,
-                PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager alarmManagerThree = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManagerThree.set(AlarmManager.RTC, Long.parseLong(reminderThree), operationThree);
-        uniqueAlarmIndex++;
+        PendingIntent operationThree = PendingIntent.getBroadcast(this, 2,
+                checkInIntent, PendingIntent.FLAG_ONE_SHOT);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calThree.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, operationThree);
+//
+//        // Reminder Four
+//        PendingIntent operationFour = PendingIntent.getBroadcast(this, 3,
+//                checkInIntent, PendingIntent.FLAG_ONE_SHOT);
+//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calFour.getTimeInMillis(),
+//                AlarmManager.INTERVAL_DAY, operationFour);
 
-        // Reminder Four
-        PendingIntent operationFour = PendingIntent.getBroadcast(this, uniqueAlarmIndex, checkInIntent,
-                PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager alarmManagerFour = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManagerFour.set(AlarmManager.RTC, Long.parseLong(reminderThree), operationFour);
-        uniqueAlarmIndex++;
-
-        Log.d(ACTIVITY_NAME, "Found reminder: " + reminderOne);
-        Log.d(ACTIVITY_NAME, "Found reminder: " + reminderTwo);
-        Log.d(ACTIVITY_NAME, "Found reminder: " + reminderThree);
-        Log.d(ACTIVITY_NAME, "Found reminder: " + reminderFour);
+        Log.d(ACTIVITY_NAME, "Found reminder: " + reminderOne + " " + calOne.getTimeInMillis());
+        Log.d(ACTIVITY_NAME, "Found reminder: " + reminderTwo + " " + calTwo.getTimeInMillis());
+        Log.d(ACTIVITY_NAME, "Found reminder: " + reminderThree + " " + calThree.getTimeInMillis());
+        Log.d(ACTIVITY_NAME, "Found reminder: " + reminderFour + " " + calFour.getTimeInMillis());
 
         List<Reminder> newReminders = new ArrayList<Reminder>();
         newReminders.add(new Reminder(Long.parseLong(reminderOne)));

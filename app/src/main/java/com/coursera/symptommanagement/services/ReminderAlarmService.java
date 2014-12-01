@@ -11,7 +11,9 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.coursera.symptommanagement.R;
+import com.coursera.symptommanagement.activities.LoginActivity;
 import com.coursera.symptommanagement.activities.patient.PatientCheckInActivity;
+import com.coursera.symptommanagement.models.Patient;
 
 public class ReminderAlarmService extends Service {
 
@@ -42,7 +44,7 @@ public class ReminderAlarmService extends Service {
 
         Log.d(SERVICE_NAME, "Entered onStartCommand()");
 
-        Intent reminderIntent = new Intent(this.getApplicationContext(), PatientCheckInActivity.class);
+        Intent reminderIntent = new Intent(this.getApplicationContext(), LoginActivity.class);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                                                 .setSmallIcon(R.drawable.ic_launcher)

@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.coursera.symptommanagement.R;
+import com.coursera.symptommanagement.activities.LoginActivity;
 import com.coursera.symptommanagement.activities.doctor.DoctorPatientProfileActivity;
 import com.coursera.symptommanagement.adapters.AppetiteListAdapter;
 import com.coursera.symptommanagement.adapters.PainListAdapter;
@@ -36,6 +37,10 @@ import com.coursera.symptommanagement.models.Medication;
 import com.coursera.symptommanagement.models.MedicationEvent;
 import com.coursera.symptommanagement.models.Pain;
 import com.coursera.symptommanagement.models.Patient;
+import com.coursera.symptommanagement.models.UserMedical;
+import com.coursera.symptommanagement.services.DoctorService;
+import com.coursera.symptommanagement.services.DoctorServiceAPI;
+import com.coursera.symptommanagement.services.PatientService;
 import com.coursera.symptommanagement.services.PatientServiceAPI;
 import com.coursera.symptommanagement.task.CallableTask;
 import com.coursera.symptommanagement.task.SvcStore;
@@ -388,6 +393,10 @@ public class PatientCheckInActivity extends Activity
                                 PatientCheckInActivity.this,
                                 "Saved Check In.",
                                 Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(getApplicationContext(), PatientProfileActivity.class);
+                        intent.putExtra("PATIENT", patient);
+                        startActivity(intent);
                     }
                 });
             }
